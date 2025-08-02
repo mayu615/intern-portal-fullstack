@@ -1,14 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
-  const intern = JSON.parse(localStorage.getItem("internData"));
+  const [intern, setIntern] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!intern) {
-    return <Navigate to="/" replace />;
-  }
+  useEffect(() => {
+    const storedIntern = localStorage.getItem("loggedInUser");
+    if (storedIntern) {
+      setIntern(JSON.parse(storedIntern));
+    }
+    setLoading(false);
+  }, []);
 
-  return children;
+  if (loading) return null; 
+
+  return intern ? children : <Navigate to="/" replace />;
 };
 
 export default ProtectedRoute;
